@@ -2,14 +2,25 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
+
+	"github.com/nomadcoders/nomadcoin/blockchain"
 )
 
 const port string = ":4000"
 
+type homeData struct{
+	PageTitle string
+	Blocks []*blockchain.Block
+}
+
 func home (rw http.ResponseWriter, r *http.Request){
-	fmt.Fprint(rw, "Hello from home!")
+	tmpl:= template.Must(template.ParseFiles("templates/home.gohtml"))
+	
+	data := homeData{"home", blockchain.GetBlockChain().AllBlocks()}
+	tmpl.Execute(rw, data)
 }
 
 func main(){
